@@ -10,7 +10,7 @@ app.use(kwm(compiler))
 // response
 
 app.use(async ctx => {
-  ctx.body = ctx.state.webpackStats.compilation.assets;
+  ctx.body = Object.keys(ctx.state.webpackStats.compilation.assets);
 });
 
 app.listen(3000);

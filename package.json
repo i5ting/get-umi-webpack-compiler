@@ -1,5 +1,8 @@
 {
-  "private": false,
+  "name": "get-umi-webpack-compiler",
+  "version": "0.0.1",
+  "description": "get umi webpack compiler",
+  "main": "index.js",
   "scripts": {
     "start": "umi dev",
     "build": "umi build",

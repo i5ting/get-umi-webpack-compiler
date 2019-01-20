@@ -1,22 +1,20 @@
 const webpack = require('webpack')
 const path = require( "path");
-
 const join = path.join;
-
-process.env.UMI_DIR = process.cwd() + "/node_modules/umi";
-
-const args = {};
 
 const getRouteManager = require('umi-build-dev/lib/plugins/commands/getRouteManager').default;
 const getFilesGenerator = require('umi-build-dev/lib/plugins/commands/getFilesGenerator').default;
 const Service = require('umi-build-dev/lib/Service').default;
 const UserConfig = require('umi-build-dev/lib/UserConfig').default;
 
-args.cwd = process.cwd()
+module.exports = function(pwd){
+    if (!pwd) pwd = process.cwd();
+    
+    const args = {
+        cwd: pwd
+    };
 
-
-module.exports = function(){
-  
+    process.env.UMI_DIR = pwd + "/node_modules/umi";
 
     // 初始化service
     const service = new Service({})
@@ -32,9 +30,9 @@ module.exports = function(){
     service.userConfig = userConfig;
 
     if (config.outputPath) {
-    const paths = service.paths;
-    paths.outputPath = config.outputPath;
-    paths.absOutputPath = join(paths.cwd, config.outputPath);
+        const paths = service.paths;
+        paths.outputPath = config.outputPath;
+        paths.absOutputPath = join(paths.cwd, config.outputPath);
     }
 
     process.env.NODE_ENV = 'production';
@@ -52,6 +50,7 @@ module.exports = function(){
         RoutesManager,
         mountElementId: service.config.mountElementId,
     });
+
     filesGenerator.generate();
 
     // 获取webpack配置信息
