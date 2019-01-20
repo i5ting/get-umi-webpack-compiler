@@ -33,6 +33,12 @@ app.use(async ctx => {
 app.listen(3000);
 ```
 
+返回ctx.state.webpackStats.compilation.assets结果
+
+```
+["static/yay.44dd3333.jpg","layouts__index.chunk.css","layouts__index.async.js","p__index.chunk.css","p__index.async.js","umi.css","umi.js"]
+```
+
 ## Test
 
 ```
