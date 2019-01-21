@@ -5,10 +5,20 @@ react ssr 在dev环境下，需要获得webpack-compiler.
 ## Usages
 
 ```
-const compiler = require('get-umi-webpack-compiler')(dir)
+const compiler = require('get-umi-webpack-compiler')(entry, dir)
 ```
 
-如果没dir参数，默认是process.cwd()
+示例
+
+```
+const compiler = require('.')({
+  'app1':"@/pages/index.tsx"
+}, process.cwd())
+```
+
+- entry是自定的入口，一般用于自定义的服务器端组件编译
+- @是别名，指定src目录。
+- 如果没dir参数，默认是process.cwd()
 
 ## Examples
 下面是一个koa + dev + hot middleware的例子。

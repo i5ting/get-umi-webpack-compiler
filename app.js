@@ -1,7 +1,9 @@
 const Koa = require('koa');
 const kwm = require('kwm');
 
-const compiler = require('.')()
+const compiler = require('.')({
+  'app1':"@/pages/index.tsx"
+})
 
 const app = new Koa();
 

@@ -7,8 +7,9 @@ const getFilesGenerator = require('umi-build-dev/lib/plugins/commands/getFilesGe
 const Service = require('umi-build-dev/lib/Service').default;
 const UserConfig = require('umi-build-dev/lib/UserConfig').default;
 
-module.exports = function(pwd){
+module.exports = function(entry, pwd){
     if (!pwd) pwd = process.cwd();
+    if (!entry) entry = {};
     
     const args = {
         cwd: pwd
@@ -42,8 +43,8 @@ module.exports = function(pwd){
     const RoutesManager = getRouteManager(service);
     RoutesManager.fetchRoutes();
 
-    console.log("service.config.mountElementId," + service.config)
-    console.dir(service.config.mountElementId)
+    // console.log("service.config.mountElementId," + service.config)
+    // console.dir(service.config.mountElementId)
 
     // 生成.umi-production里的信息
     const filesGenerator = getFilesGenerator(service, {
@@ -55,6 +56,11 @@ module.exports = function(pwd){
 
     // 获取webpack配置信息
     const webpackConfig = require('umi-build-dev/lib/getWebpackConfig').default(service);
+    
+    // debug(webpackConfig)
+    for(var k in entry){
+        webpackConfig.entry[k] = entry[k]
+    }
 
     const compiler = webpack(webpackConfig);
 
