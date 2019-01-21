@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const nodeExternals = require('webpack-node-externals')
 const path = require( "path");
 const join = path.join;
 
@@ -11,14 +12,12 @@ module.exports = function(entry, pwd){
     if (!pwd) pwd = process.cwd();
     if (!entry) entry = {};
     
-    const args = {
-        cwd: pwd
-    };
-
     process.env.UMI_DIR = pwd + "/node_modules/umi";
 
     // 初始化service
-    const service = new Service({})
+    const service = new Service({
+        cwd: pwd
+    })
     // service.init();
 
     service.loadEnv();
@@ -61,6 +60,19 @@ module.exports = function(entry, pwd){
     for(var k in entry){
         webpackConfig.entry[k] = entry[k]
     }
+
+    // for node server-side render config
+    const isDev = process.env.NODE_ENV === 'development'
+    webpackConfig.mode = process.env.NODE_ENV
+    webpackConfig.devtool = isDev ? 'eval-source-map' : ''
+    webpackConfig.target = 'node'
+    webpackConfig.externals = nodeExternals({
+        whilelist: /\.(css|less|sass|scss)$/
+    })
+    webpackConfig.output.libraryTarget ='commonjs2'
+    webpackConfig.plugins.push(new webpack.DefinePlugin({
+        __isBrowser__: false
+    }))
 
     const compiler = webpack(webpackConfig);
 

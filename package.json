@@ -6,7 +6,7 @@
   "scripts": {
     "start": "umi dev",
     "build": "umi build",
-    "test": "umi test",
+    "test": "COMPRESS=none node test>test.log",
     "lint:es": "eslint --ext .js src mock tests",
     "lint:ts": "tslint \"src/**/*.ts\" \"src/**/*.tsx\"",
     "precommit": "lint-staged"
@@ -14,7 +14,8 @@
   "dependencies": {
     "lodash": "^4.17.11",
     "umi-build-dev": "^1.4.3",
-    "webpack": "^4.28.4"
+    "webpack": "^4.28.4",
+    "webpack-node-externals": "^1.7.2"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",

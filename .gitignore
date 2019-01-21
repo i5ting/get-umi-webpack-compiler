@@ -15,4 +15,5 @@
 
 # umi
 .umi
+*.log
 .umi-production
