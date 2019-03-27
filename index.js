@@ -33,8 +33,6 @@ module.exports = function (entry, pwd) {
     paths.outputPath = config.outputPath
     paths.absOutputPath = join(paths.cwd, config.outputPath)
   }
-
-  process.env.NODE_ENV = 'production'
   service.applyPlugins('onStart')
 
   // 获得路由
