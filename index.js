@@ -25,6 +25,7 @@ module.exports = function (entry, pwd) {
   // 合并默认配置和用户配置
   const userConfig = new UserConfig(service)
   const config = userConfig.getConfig({ force: true })
+  config.history = 'memory' // server端使用memoryhistory
   mergeConfig(service.config, config)
   service.userConfig = userConfig
 
@@ -34,7 +35,6 @@ module.exports = function (entry, pwd) {
     paths.absOutputPath = join(paths.cwd, config.outputPath)
   }
   service.applyPlugins('onStart')
-
   // 获得路由
   const RoutesManager = getRouteManager(service)
   RoutesManager.fetchRoutes()
@@ -42,7 +42,7 @@ module.exports = function (entry, pwd) {
   // console.log("service.config.mountElementId," + service.config)
   // console.dir(service.config.mountElementId)
 
-  // 生成.umi-production里的信息
+  // 生成.umi-production文件里的信息
   const filesGenerator = getFilesGenerator(service, {
     RoutesManager,
     mountElementId: service.config.mountElementId
@@ -72,9 +72,11 @@ module.exports = function (entry, pwd) {
   webpackConfig.plugins.push(new webpack.DefinePlugin({
     __isBrowser__: false
   }))
-
+  delete webpackConfig.optimization
+  webpackConfig.output.chunkFilename = '[name].server.js'
+  webpackConfig.entry.umi.shift() // server端去除hotDevClient这个入口文件
+  // console.log(webpackConfig)
   const compiler = webpack(webpackConfig)
-
   // 测试webpack执行情况
   // compiler.run((err, stats) => {/* ...处理结果 */
   // if (err) console.dir(err)
