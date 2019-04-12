@@ -1,6 +1,6 @@
 {
   "name": "get-umi-webpack-compiler",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "get umi webpack compiler",
   "main": "index.js",
   "scripts": {
