@@ -50,7 +50,6 @@ module.exports = function (entry, pwd) {
 
   // 获取webpack配置信息
   const webpackConfig = require('umi-build-dev/lib/getWebpackConfig').default(service)
-
   // debug(webpackConfig)
   if (entry) {
     for (var k in entry) {
@@ -72,18 +71,19 @@ module.exports = function (entry, pwd) {
       item.definitions.__isBrowser__ = false
     }
   })
-  delete webpackConfig.optimization
   webpackConfig.output.filename = '[name].server.js'
   webpackConfig.output.chunkFilename = '[name].server.chunk.js'
-  let webpackHotDevClientIndex
-  if (Array.isArray(webpackConfig.entry.umi)) {
-    webpackConfig.entry.umi.map((item, index) => {
-      if (item.match('webpackHotDevClient')) {
-        webpackHotDevClientIndex = index
-      }
-    })
+  if (isDev) {
+    let webpackHotDevClientIndex
+    if (Array.isArray(webpackConfig.entry.umi)) {
+      webpackConfig.entry.umi.map((item, index) => {
+        if (item.match('webpackHotDevClient')) {
+          webpackHotDevClientIndex = index
+        }
+      })
+    }
+    webpackConfig.entry.umi.splice(webpackHotDevClientIndex, 1)
   }
-  webpackConfig.entry.umi.splice(webpackHotDevClientIndex, 1)
   const compiler = webpack(webpackConfig)
   // 测试webpack执行情况
   // compiler.run((err, stats) => {/* ...处理结果 */
