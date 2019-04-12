@@ -12,7 +12,6 @@ module.exports = function (entry, pwd) {
   if (!pwd) pwd = process.cwd()
 
   process.env.UMI_DIR = pwd + '/node_modules/umi'
-
   // 初始化service
   const service = new Service({
     cwd: pwd
@@ -25,7 +24,6 @@ module.exports = function (entry, pwd) {
   // 合并默认配置和用户配置
   const userConfig = new UserConfig(service)
   const config = userConfig.getConfig({ force: true })
-  config.history = 'memory' // server端使用memoryhistory
   mergeConfig(service.config, config)
   service.userConfig = userConfig
 
@@ -69,13 +67,23 @@ module.exports = function (entry, pwd) {
     whilelist: /\.(css|less|sass|scss)$/
   })
   webpackConfig.output.libraryTarget = 'commonjs2'
-  webpackConfig.plugins.push(new webpack.DefinePlugin({
-    __isBrowser__: false
-  }))
+  webpackConfig.plugins.map(item => {
+    if (item.definitions) {
+      item.definitions.__isBrowser__ = false
+    }
+  })
   delete webpackConfig.optimization
-  webpackConfig.output.chunkFilename = '[name].server.js'
-  webpackConfig.entry.umi.shift() // server端去除hotDevClient这个入口文件
-  // console.log(webpackConfig)
+  webpackConfig.output.filename = '[name].server.js'
+  webpackConfig.output.chunkFilename = '[name].server.chunk.js'
+  let webpackHotDevClientIndex
+  if (Array.isArray(webpackConfig.entry.umi)) {
+    webpackConfig.entry.umi.map((item, index) => {
+      if (item.match('webpackHotDevClient')) {
+        webpackHotDevClientIndex = index
+      }
+    })
+  }
+  webpackConfig.entry.umi.splice(webpackHotDevClientIndex, 1)
   const compiler = webpack(webpackConfig)
   // 测试webpack执行情况
   // compiler.run((err, stats) => {/* ...处理结果 */
@@ -83,7 +91,11 @@ module.exports = function (entry, pwd) {
 
   // console.dir(stats)
   // })
-  return compiler
+
+  return {
+    webpackConfig,
+    compiler
+  }
 }
 
 // 合并配置
